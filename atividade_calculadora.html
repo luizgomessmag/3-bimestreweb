@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora PHP</title> <!--Título da guia-->
+    <style>
+        body { /*Esse bloco de código é responsável por definir a fonte utilizada, alinhar e justificar o conteúdo no centro, e através do comando height: 100vh, ocupar 100% da altura da guia.*/
+            
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f3f3f3;
+        } /*Aqui, define a cor do fundo como branca, adiciona uma largura de conteudo de 280px, arredonda as bordas e cria um espaçamento interno de 20px entre a borda e o conteúdo.*/
+        .calc-container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            width: 280px;
+        }/*Aqui, alterando o display, adiciona uma largura de 100%, altura de 50px, altera o tamanho da fonte, adiciona espaçamento interno entre a borda e o conteúdo, adiciona um contorno na borda e arredonda ela.*/
+        .display {
+            width: 100%;
+            height: 50px;
+            margin-bottom: 10px;
+            font-size: 22px;
+            text-align: right;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background: #fafafa;
+        }/*Com o comando display:grid, os elementos são organizados em linhas e colunas, em seguida, são definidas 4 colunas iguais, com o comando grid-template-columns, na qual os elementos ficarão dispostos. Também adiciona um gap, que adiciona um espaçamento entre os elementos e colunas.*/
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }/*Nesse trecho, adiciona um espaçamento entre elementos e borda de 15px, define o tamanho da fonte como 18px, não adiciona contorno à borda, arredonda a borda com 8px e define o cursor como pointer, alterando o cursor quando entrar em contato com a área dos botões.*/
+        button {
+            padding: 15px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #e0e0e0;
+        }
+        button:active {
+            background: #bdbdbd;
+        }
+        .equal {
+            grid-column: span 2;
+            background: #4caf50;
+            color: white;
+        }
+        .equal:active {
+            background: #388e3c; /*Define uma cor verde para o botão de "=" */
+        }
+    </style>
+</head>
+<body>
+<div class="calc-container"> <!--Aqui, uma Div geral é criada, abrangendo todo o código html.-->
+    <form action="controller.php" method="post" id="calcForm"> <!--Aqui, um formulário é criado, para preencher todo o código, visto que é a estrutura responsável por captar os valores inseridos pelo usuário.-->
+        <input type="text" id="display" class="display" readonly><!--Adiciona um input do tipo texto, porém não é mutável, sendo apenas um campo de leitura definido pelo comando "readonly"-->
+
+        <!-- campos ocultos que serão enviados -->
+        <input type="hidden" name="num1" id="num1">
+        <input type="hidden" name="num2" id="num2">
+        <input type="hidden" name="operacao" id="operacao">
+
+        <div class="buttons"> <!--Nessa div, os botões de números e operações são adicionados, com a função "onclick = appendnumber" para adicionar o devido numero informado e "onclick = setoperation" para definir a operação desejada.-->
+            <button type="button" onclick="appendNumber('7')">7</button>
+            <button type="button" onclick="appendNumber('8')">8</button><!--Aqui são adicionados os botões de 7 a 9 e a operação divisão.-->
+            <button type="button" onclick="appendNumber('9')">9</button>
+            <button type="button" onclick="setOperation('dividir')">÷</button>
+
+            <button type="button" onclick="appendNumber('4')">4</button>
+            <button type="button" onclick="appendNumber('5')">5</button><!--Aqui, são adicionados o botões de 4 a 6 e a operação multiplicação.-->
+            <button type="button" onclick="appendNumber('6')">6</button>
+            <button type="button" onclick="setOperation('multiplicar')">×</button>
+
+            <button type="button" onclick="appendNumber('1')">1</button>
+            <button type="button" onclick="appendNumber('2')">2</button><!--Aqui, são adicionados os numeros restantes, de 1 a 3 e a operação subtração.-->
+            <button type="button" onclick="appendNumber('3')">3</button>
+            <button type="button" onclick="setOperation('subtrair')">−</button>
+
+            <button type="button" onclick="appendNumber('0')">0</button>
+            <button type="button" onclick="appendNumber('.')">.</button><!--Nesse bloco final, o 0 é adicionado, juntamente com a operação de soma, sinal de igual e separador decimal.-->
+            <button type="submit" class="equal">=</button>
+            <button type="button" onclick="setOperation('somar')">+</button>
+        </div>
+    </form> <!--Aqui se encerra o campo de formulário.-->
+</div>
+
+<script>//--> Aqui o scrip é implementado
+    let currentInput = "";
+    let firstNumber = "";//Nesse trecho, as 3 principais variáveis são criadas, todas contendo um valor vazio, sendo elas o atual valor inserido, o primeiro número e a operação.
+    let operation = "";
+
+    function appendNumber(num) {//Essa função é responsável por atualizar o display, inserindo no mesmo os valores escolhidos pelo usuário
+        currentInput += num;
+        document.getElementById("display").value = currentInput;
+    }
+
+    function setOperation(op) {//Essa função é responsável por limpar o display caso o usuário insira alguma operação, caso nenhum número seja informado, o display permanece vazio. 
+        if (currentInput === "") return;
+        firstNumber = currentInput;
+        operation = op;
+        currentInput = "";
+        document.getElementById("display").value = "";
+    }
+
+    // Antes de enviar, coloca os valores nos inputs ocultos
+    document.getElementById("calcForm").addEventListener("submit", function(e) {
+        if (firstNumber === "" || currentInput === "" || operation === "") { // Caso algum dos inputs do display estejam vazios, um alerta é enviado, informando que a operação está incompleta, sendo possível enviar apenas operações envolvendo os três elementos.
+            e.preventDefault();
+            alert("Operação incompleta!");
+            return;
+        }
+        document.getElementById("num1").value = firstNumber;
+        document.getElementById("num2").value = currentInput;// Aqui, os valores definidos pelo usuário são enviados.
+        document.getElementById("operacao").value = operation;
+    });
+</script> <!--O scrip é finalizado-->
+</body>
+</html>
