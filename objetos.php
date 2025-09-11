@@ -1,13 +1,13 @@
 <?php
 
 
-//--------------------------CLASS PRODUTO-------------------------------
+//--------------------------CLASSE PRODUTO-------------------------------
 
 class Produto{
 
     public string $nome;
-    public string $preco;
-    public string $estoque;
+    public float $preco;
+    public int $estoque;
 
      public function __construct($nome, $preco, $estoque){
         
@@ -21,22 +21,22 @@ class Produto{
     }
 
      public function vender(int $quantidade){
-        if(this->$estoque>=$quantidade){
-            $this->$estoque-=$quantidade;
-            echo "Produto: $this->$nome Quantidade vendida: $this->$quantidade";
+        if($this->estoque>=$quantidade){
+            $this->estoque-=$quantidade;
+            echo "Produto: $this->nome Quantidade vendida: $quantidade";
         }
         else{
-            echo "$this->$nome não possui estoque";
+            echo "$this->nome não possui estoque";
         }
      }
 
      public function resumo(){
-        echo" $this->$nome custa $this->$preco e possui $this->$estoque";
+        echo" $this->nome custa $this->preco e possui $this->estoque";
         }
      
 }
 
-//--------------------------CLASS ALUNO-------------------------------
+//--------------------------CLASSE ALUNO-------------------------------
 
 Class Aluno{
 
@@ -73,12 +73,12 @@ Class Aluno{
      }
 }
 
-//--------------------------CLASS CONTABANCARIA-------------------------------
+//--------------------------CLASSE CONTABANCARIA-------------------------------
 
 class ContaBancaria{
 
     public string $titular;
-    public string $saldo;
+    public float $saldo;
 
      public function __construct($titular, $saldo){
         
@@ -92,7 +92,7 @@ class ContaBancaria{
      }
 
      public function sacar(float $valor){
-        if ($this->$saldo>=$this->$valor){
+        if ($this->saldo>=$this->$valor){
             $this->saldo -=$valor;
             echo "Saque executado, o seu saldo é: $this->$saldo";
         }
@@ -108,4 +108,86 @@ class ContaBancaria{
      }
 }
 
-//--------------------------BIBLIOTECA-------------------------------
+//--------------------------CLASSE BIBLIOTECA-------------------------------
+
+class Biblioteca{
+
+
+    public string $nome;
+    private array $livros = [];
+
+     public function __construct($nome){
+        
+        $this->nome = $nome;
+     }
+
+    public function AdicionarLivro(string $titulo){
+        $this->livros[] = $titulo;
+    }
+
+    public function BuscarLivro(string $termo){
+        $buscas = [];
+
+        foreach ($this->livros as $livro) {
+        if (stripos($livro, $termo) !== false) {
+            $buscas[] = $livro;
+            }
+        }
+        return $buscas;
+    }   
+
+    public function ListarLivros() {
+        foreach ($this->livros as $livro) {
+        echo "$livro\n";
+        }
+    }
+}
+
+//--------------------------PEDIDO-------------------------------
+
+class Produto {
+    public string $nome;
+    public float $preco;
+
+    public function __construct(string $nome, float $preco) {
+        $this->nome = $nome;
+        $this->preco = $preco;
+    }
+}
+
+class Pedido {
+    public string $cliente;
+    private array $itens = [];
+
+    public function __construct(string $cliente) {
+        $this->cliente = $cliente;
+    }
+
+    public function AdicionarItem(Produto $produto, int $quantidade) {
+        $this->itens[] = ['produto'=>$produto, 'quantidade'=>$quantidade];
+    }
+
+    public function Total(){
+        $total = 0;
+        foreach ($this->itens as $item) {
+        $total += $item['produto']->preco * $item['quantidade'];
+    }
+        return $total;
+    }
+
+    public function detalhes(){
+        echo "Pedido de: $this->cliente\n";
+        echo "Itens:\n";
+
+        foreach ($this->itens as $item) {
+        $produto = $item['produto'];
+        $quantidade = $item['quantidade'];
+        $subtotal = $produto->preco * $quantidade;
+        echo "{$produto->nome} x $quantidade = R$$subtotal\n";
+    }
+
+        echo "Total: R$ {$this->Total()}\n";
+    }
+}
+
+//--------------------------TURMA-------------------------------
